@@ -11,7 +11,7 @@ public class CmdInterface {
         Account checking = readFromFile("checking.ser");
         Account savings = readFromFile("savings.ser");
         while (true) {
-            System.out.println("-----------------ACCOUNT OVERVIEW-----------------");
+            System.out.println("---------------------ACCOUNT OVERVIEW---------------------");
             System.out.println("Accounts:\n");
             if (checking == null || savings == null) {
                 throw new IllegalArgumentException("Entered incorrect path.");
@@ -24,7 +24,7 @@ public class CmdInterface {
             while (true) {
                 s = in.nextLine();
                 if (!s.equals("1") && !s.equals("2") && !s.equals("3")) {
-                    System.out.println("No accounts detected. Please enter only the numbers corresponding to accounts.");
+                    System.out.println("No accounts detected. Please only enter numbers corresponding to accounts.");
                 } else {
                     break;
                 }
@@ -61,10 +61,18 @@ public class CmdInterface {
             if (s.equals("1")) {
                 System.out.println("How much would you like to deposit?");
                 float deposit = in.nextFloat();
+                while (deposit < 0) {
+                    System.out.println("Do you want your money lost to the void? Positive numbers only.");
+                    deposit = in.nextFloat();
+                }
                 checking.deposit(deposit);
             } else if (s.equals("2")) {
                 System.out.println("How much would you like to withdraw?");
                 float withdrawal = in.nextFloat();
+                while (withdrawal < 0) {
+                    System.out.println("Think robbing a bank is that easy? Positive numbers only.");
+                    withdrawal = in.nextFloat();
+                }
                 checking.withdraw(withdrawal);
             } else {
                 break;
@@ -93,10 +101,18 @@ public class CmdInterface {
             if (s.equals("1")) {
                 System.out.println("How much would you like to deposit?");
                 float deposit = in.nextFloat();
+                while (deposit < 0) {
+                    System.out.println("Do you want your money lost to the void? Positive numbers only.");
+                    deposit = in.nextFloat();
+                }
                 savings.deposit(deposit);
             } else if (s.equals("2")) {
                 System.out.println("How much would you like to withdraw?");
                 float withdrawal = in.nextFloat();
+                while (withdrawal < 0) {
+                    System.out.println("Think robbing a bank is that easy? Positive numbers only.");
+                    withdrawal = in.nextFloat();
+                }
                 savings.withdraw(withdrawal);
             } else {
                 break;
