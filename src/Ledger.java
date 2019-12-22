@@ -4,7 +4,7 @@ import java.io.ObjectInputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-public class CmdInterface {
+public class Ledger{
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
