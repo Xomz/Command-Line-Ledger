@@ -76,7 +76,7 @@ public class Ledger{
                     break;
                 }
             }
-            if (s.equals("1")) {
+            if (s.equals("1")) { // Deposit
                 System.out.println("How much would you like to deposit?");
                 while (!in.hasNextFloat()) {
                     System.out.println("Please enter a positive numerical value.");
@@ -88,7 +88,7 @@ public class Ledger{
                     deposit = in.nextFloat();
                 }
                 acc.deposit(deposit);
-            } else if (s.equals("2")) {
+            } else if (s.equals("2")) { // Withdraw
                 System.out.println("How much would you like to withdraw?");
                 while (!in.hasNextFloat()) {
                     System.out.println("Please enter a positive numerical value.");
@@ -99,8 +99,12 @@ public class Ledger{
                     System.out.println("Think robbing a bank is that easy? Positive numbers only.");
                     withdrawal = in.nextFloat();
                 }
+                while (acc.getBalance() - withdrawal < 0) {
+                    System.out.println("Cannot withdraw more than you have in your account.");
+                    withdrawal = in.nextFloat();
+                }
                 acc.withdraw(withdrawal);
-            } else if (s.equals("3")){
+            } else if (s.equals("3")){ // Add Budget
                 System.out.println("What would you like to name your budget? (1-15 characters)");
                 String name = in.nextLine();
                 while (name.length() == 0) {
@@ -118,7 +122,7 @@ public class Ledger{
                 }
                 float budget = in.nextFloat();
                 while (budget < 0) {
-                    System.out.println("Think robbing a bank is that easy? Positive numbers only.");
+                    System.out.println("Cannot add negative budgets.");
                     budget = in.nextFloat();
                 }
                 if (acc.getBalance() - budget < 0) {
@@ -131,7 +135,7 @@ public class Ledger{
                 if (s.equals("n")) { continue; }
                 acc.addBudget(name, budget);
                 System.out.printf("Budget Added.\n");
-            } else if (s.equals("4")) {
+            } else if (s.equals("4")) { // Delete Budget
                 if (subAccounts == null || subAccounts.isEmpty()) {
                     System.out.println("There are no budgets to delete. Create a budget first.");
                     continue;
@@ -153,7 +157,7 @@ public class Ledger{
                 if (found) {
                     System.out.println("Budget removed.");
                 }
-            } else if (s.equals("5")) {
+            } else if (s.equals("5")) { // Exit
                 break;
             }
         }
