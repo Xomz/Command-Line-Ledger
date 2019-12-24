@@ -43,9 +43,9 @@ public class Ledger{
     }
 
     private static void checkingInterface(Scanner in, Account checking) {
-        System.out.println("-----------------CHECKING-----------------");
         while (true) {
-            System.out.printf("\nTotal Account Balance: %.2f\n", checking.getBalance());
+            System.out.println("\n-----------------CHECKING-----------------");
+            System.out.printf("Total Account Balance: %.2f\n", checking.getBalance());
             LinkedList<BudgetAmt> subAccounts = checking.getsubAccounts();
             if (subAccounts != null && !subAccounts.isEmpty()) {
                 System.out.printf("Budgets:                   \n");
@@ -78,6 +78,10 @@ public class Ledger{
             }
             if (s.equals("1")) {
                 System.out.println("How much would you like to deposit?");
+                while (!in.hasNextFloat()) {
+                    System.out.println("Please enter a positive numerical value.");
+                    in.nextLine();
+                }
                 float deposit = in.nextFloat();
                 while (deposit < 0) {
                     System.out.println("Do you want your money lost to the void? Positive numbers only.");
@@ -86,6 +90,10 @@ public class Ledger{
                 checking.deposit(deposit);
             } else if (s.equals("2")) {
                 System.out.println("How much would you like to withdraw?");
+                while (!in.hasNextFloat()) {
+                    System.out.println("Please enter a positive numerical value.");
+                    in.nextLine();
+                }
                 float withdrawal = in.nextFloat();
                 while (withdrawal < 0) {
                     System.out.println("Think robbing a bank is that easy? Positive numbers only.");
