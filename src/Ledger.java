@@ -3,6 +3,7 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.util.LinkedList;
 import java.util.Scanner;
 public class Ledger{
 
@@ -18,7 +19,7 @@ public class Ledger{
             }
             System.out.printf("1. Checking:      %.2f\n\n", checking.getBalance());
             System.out.printf("2. Savings:       %.2f\n\n", savings.getBalance());
-            System.out.println("To access an account, enter its " +
+            System.out.println("To access an account enter its " +
                     "corresponding number, or press (3) to exit.");
             String s;
             while (true) {
@@ -42,17 +43,34 @@ public class Ledger{
     }
 
     private static void checkingInterface(Scanner in, Account checking) {
-        System.out.println("-----------------CHECKING-----------------\n");
+        System.out.println("-----------------CHECKING-----------------");
         while (true) {
-            System.out.printf("Account Balance: %.2f\n", checking.getBalance());
-            System.out.println("Press (1) to make a deposit, (2) for a withdrawal, or (3) to exit.");
+            System.out.printf("\nTotal Account Balance: %.2f\n", checking.getBalance());
+            LinkedList<BudgetAmt> subAccounts = checking.getsubAccounts();
+            if (subAccounts != null && !subAccounts.isEmpty()) {
+                System.out.printf("Budgets:                   \n");
+                String printString;
+                float budgetTotal = 0;
+                for (BudgetAmt subAccount : subAccounts) {
+                    printString = "    " + subAccount.name;
+                    for (int i = 0; i < 15 - subAccount.name.length(); i++) {
+                        printString += " ";
+                    }
+                    System.out.printf("%s: %.2f\n", printString, subAccount.amount);
+                    budgetTotal += subAccount.amount;
+                }
+                System.out.printf("Balance After Budgets: %.2f\n", checking.getBalance() - budgetTotal);
+
+            }
+            System.out.println("------------------------------------------\n");
+            System.out.println("<Press (1) to make a deposit, (2) for a withdrawal,(3) to create a new budget, or (4) to exit.>");
             String s;
             while (true) {
                 s = in.nextLine();
                 if (s.equals("")) {
                     continue;
                 }
-                if (!s.equals("1") && !s.equals("2") && !s.equals("3")) {
+                if (!s.equals("1") && !s.equals("2") && !s.equals("3") && !s.equals("4")) {
                     System.out.println("Please only enter the prompted numbers.");
                 } else {
                     break;
@@ -74,11 +92,41 @@ public class Ledger{
                     withdrawal = in.nextFloat();
                 }
                 checking.withdraw(withdrawal);
-            } else {
+            } else if (s.equals("3")){
+                System.out.println("What would you like to name your budget? (1-15 characters)");
+                s = in.nextLine();
+                while (s.length() == 0) {
+                    System.out.println("Please enter between 1 and 15 characters.");
+                    s = in.nextLine();
+                }
+                while (s.length() > 15) {
+                    System.out.println("Please enter between 1 and 15 characters.");
+                    s = in.nextLine();
+                }
+                System.out.println("How much would you like to budget from your account?");
+                while (!in.hasNextFloat()) {
+                    System.out.println("Please enter a positive numerical value.");
+                    in.nextLine();
+                }
+                float budget = in.nextFloat();
+                while (budget < 0) {
+                    System.out.println("Think robbing a bank is that easy? Positive numbers only.");
+                    budget = in.nextFloat();
+                }
+                if (checking.getBalance() - budget < 0) {
+                    System.out.println("<WARNING: This budget will exceed your account balance. Proceed? (y/n)>");
+                    while (!s.equals("y") && !s.equals("n")) {
+                        s = in.nextLine();
+                    }
+                }
+                if (s.equals("n")) { continue; }
+                System.out.printf("Adding budget...");
+                checking.addBudget(s, budget);
+                System.out.printf("Done!\n");
+            } else if (s.equals("4")) {
                 break;
             }
         }
-
     }
 
     private static void savingsInterface(Scanner in, Account savings) {

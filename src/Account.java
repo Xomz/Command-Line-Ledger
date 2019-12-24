@@ -1,13 +1,24 @@
 import java.io.*;
+import java.util.LinkedList;
 
 public class Account implements Serializable {
     private static final long serialVersionUID = 1234L;
-    public boolean isChecking;
+    boolean isChecking;
     private double balance;
+    private LinkedList<BudgetAmt> subAccounts;
 
-    public Account(boolean isChecking) {
+    public LinkedList<BudgetAmt> getsubAccounts() { return this.subAccounts; }
+
+    public Account() {
+        balance = 0;
+        isChecking = true;
+        subAccounts = new LinkedList<>();
+    }
+
+    Account(boolean isChecking) {
         balance = 0;
         this.isChecking = isChecking;
+        subAccounts = new LinkedList<>();
     }
 
     double getBalance() {
@@ -35,5 +46,13 @@ public class Account implements Serializable {
             System.out.println("Error Initializing Stream.");
             e.printStackTrace();
         }
+    }
+
+    void addBudget(String name, float amount) {
+        BudgetAmt thisBudget = new BudgetAmt(name, amount);
+        if (subAccounts == null) {
+            subAccounts = new LinkedList<>();
+        }
+        subAccounts.add(thisBudget);
     }
 }
