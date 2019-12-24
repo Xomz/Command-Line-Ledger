@@ -94,14 +94,14 @@ public class Ledger{
                 checking.withdraw(withdrawal);
             } else if (s.equals("3")){
                 System.out.println("What would you like to name your budget? (1-15 characters)");
-                s = in.nextLine();
-                while (s.length() == 0) {
+                String name = in.nextLine();
+                while (name.length() == 0) {
                     System.out.println("Please enter between 1 and 15 characters.");
-                    s = in.nextLine();
+                    name = in.nextLine();
                 }
-                while (s.length() > 15) {
+                while (name.length() > 15) {
                     System.out.println("Please enter between 1 and 15 characters.");
-                    s = in.nextLine();
+                    name = in.nextLine();
                 }
                 System.out.println("How much would you like to budget from your account?");
                 while (!in.hasNextFloat()) {
@@ -115,13 +115,14 @@ public class Ledger{
                 }
                 if (checking.getBalance() - budget < 0) {
                     System.out.println("<WARNING: This budget will exceed your account balance. Proceed? (y/n)>");
+                    s = in.nextLine();
                     while (!s.equals("y") && !s.equals("n")) {
                         s = in.nextLine();
                     }
                 }
                 if (s.equals("n")) { continue; }
                 System.out.printf("Adding budget...");
-                checking.addBudget(s, budget);
+                checking.addBudget(name, budget);
                 System.out.printf("Done!\n");
             } else if (s.equals("4")) {
                 break;
