@@ -46,8 +46,16 @@ public class Ledger{
 //                    System.out.println("Caught.");
                     if (!s.equals("exit")) {
                         if (s.equals("add")) {
-                            System.out.println("What would you like to name this new account?");
+                            System.out.println("What would you like to name this new account? (1-12 Characters)");
                             String name = in.nextLine();
+                            while (accounts.contains(new Account(name))) {
+                                System.out.println("Cannot have two accounts of the same name. Please enter a unique account name.");
+                                name = in.nextLine();
+                            }
+                            while (name.length() > 12 || name.length() == 0) {
+                                System.out.println("Please enter an account name between 1 and 12 characters.");
+                                name = in.nextLine();
+                            }
                             System.out.println("Would you like to initiate this account with a balance? (y/n)");
                             s = in.nextLine();
                             while (!s.equals("y") && !s.equals("n")) {
