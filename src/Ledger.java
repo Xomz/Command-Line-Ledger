@@ -32,7 +32,7 @@ public class Ledger{
                 counter++;
             }
             System.out.println("\nTo access an account enter its " +
-                    "corresponding number, type 'add' to add a new one, or type 'exit' to exit.");
+                    "corresponding number, type 'add' to add a new one, 'delete' to remove it, or type 'exit' to exit.");
             String s = "";
             int accountIndex = -1;
             while (accountIndex < 1 || accountIndex > accounts.size()) {
@@ -70,6 +70,25 @@ public class Ledger{
                                 amount = in.nextFloat();
                             }
                             accounts.add(new Account(name, amount));
+                            s = "refresh";
+                            break;
+                        } else if (s.equals("delete")) {
+                            System.out.println("Enter the number of the account you want deleted.");
+                            int index = -1;
+                            while (index < 1 || index > accounts.size()) {
+                                s = in.nextLine();
+                                try {
+                                    index = Integer.parseInt(s);
+                                } catch (NumberFormatException e2) {
+                                    System.out.println("Please enter one of the numbers listed on screen.");
+                                    continue;
+                                }
+                                if (index < 1 || index > accounts.size()) {
+                                    System.out.println("Please enter one of the numbers listed on screen.");
+                                }
+                            }
+                            accounts.remove(index - 1);
+                            System.out.println("Removed.");
                             s = "refresh";
                             break;
                         } else if (!s.equals("exit") && !s.equals("")){

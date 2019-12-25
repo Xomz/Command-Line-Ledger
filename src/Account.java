@@ -3,21 +3,33 @@ import java.util.LinkedList;
 
 public class Account implements Serializable {
     private static final long serialVersionUID = 1234L;
-    boolean isChecking;
+    String name;
     private double balance;
     private LinkedList<BudgetAmt> subAccounts;
 
     public LinkedList<BudgetAmt> getsubAccounts() { return this.subAccounts; }
 
-    public Account() {
+//    public Account() {
+//        balance = 0;
+//        name = null;
+//        subAccounts = new LinkedList<>();
+//    }
+
+    Account() {
+        name = null;
         balance = 0;
-        isChecking = true;
         subAccounts = new LinkedList<>();
     }
 
-    Account(boolean isChecking) {
+    Account(String name) {
         balance = 0;
-        this.isChecking = isChecking;
+        this.name = name;
+        subAccounts = new LinkedList<>();
+    }
+
+    Account(String name, float balance) {
+        this.balance = balance;
+        this.name = name;
         subAccounts = new LinkedList<>();
     }
 
@@ -56,4 +68,13 @@ public class Account implements Serializable {
         subAccounts.add(thisBudget);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        try {
+            Account acc2 = (Account) o;
+            return acc2.name.equals(this.name);
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
 }
