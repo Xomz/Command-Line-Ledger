@@ -1,55 +1,102 @@
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
-import java.io.IOException;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.ArrayList;
+
 public class Ledger{
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        Account checking = readFromFile("checking.ser");
-        Account savings = readFromFile("savings.ser");
-        if (checking == null || savings == null) {
-            throw new IllegalArgumentException("Entered incorrect path.");
+        ArrayList<Account> accounts = readFromFile("accounts.ser");
+        if (accounts == null) {
+            throw new IllegalArgumentException("Broken path.");
         }
         while (true) {
             System.out.println("---------------------ACCOUNT OVERVIEW---------------------");
             System.out.println("Accounts:\n");
-            System.out.printf("1. Checking:      %.2f\n\n", checking.getBalance());
-            System.out.printf("2. Savings:       %.2f\n\n", savings.getBalance());
-            System.out.println("To access an account enter its " +
-                    "corresponding number, or press (3) to exit.");
-            String s;
-            while (true) {
-                s = in.nextLine();
-                if (!s.equals("1") && !s.equals("2") && !s.equals("3")) {
-                    System.out.println("No accounts detected. Please only enter numbers corresponding to accounts.");
+            int counter = 1;
+            String printString = "";
+            for (Account account : accounts) {
+                printString += counter + ".";
+                if (counter > 9) {
+                    printString += " ";
                 } else {
-                    break;
+                    printString += "  ";
                 }
+                printString += account.name + ":";
+                for (int i = 0; i < 12 - account.name.length(); i++) {
+                    printString += " ";
+                }
+                System.out.printf("%s %.2f\n", printString, account.getBalance());
+                printString = "";
+                counter++;
             }
-            if (s.equals("1")) {
-                checkingInterface(in, checking);
-            } else if (s.equals("2")) {
-                savingsInterface(in, savings);
-            } else {
+            System.out.println("\nTo access an account enter its " +
+                    "corresponding number, type 'add' to add a new one, or type 'exit' to exit.");
+            String s = "";
+            int accountIndex = -1;
+            while (accountIndex < 1 || accountIndex > accounts.size()) {
+//                System.out.println("Iteration.");
+//                System.out.printf("accounts size: %d", accounts.size());
+                s = in.nextLine();
+                try {
+                    accountIndex = Integer.parseInt(s);
+//                    System.out.printf("Index found: %d", accountIndex);
+                } catch (NumberFormatException e) {
+//                    System.out.println("Caught.");
+                    if (!s.equals("exit")) {
+                        if (s.equals("add")) {
+                            System.out.println("What would you like to name this new account?");
+                            String name = in.nextLine();
+                            System.out.println("Would you like to initiate this account with a balance? (y/n)");
+                            s = in.nextLine();
+                            while (!s.equals("y") && !s.equals("n")) {
+                                s = in.nextLine();
+                            }
+                            float amount = 0;
+                            if (s.equals("y")) {
+                                System.out.println("What amount would you like to initiate your account with?");
+                                while (!in.hasNextFloat()) {
+                                    in.nextLine();
+                                }
+                                amount = in.nextFloat();
+                            }
+                            accounts.add(new Account(name, amount));
+                            s = "refresh";
+                            break;
+                        } else if (!s.equals("exit") && !s.equals("")){
+                            System.out.println("No accounts detected. Please only enter numbers corresponding to accounts.");
+                        }
+                    } else {
+                        break;
+                    }
+                }
+
+            }
+            if (s.equals("exit")) {
                 break;
+            } else if (!s.equals("refresh")){
+                accountInterface(in, accounts.get(accountIndex - 1));
             }
         }
-        checking.saveToFile("checking.ser");
-        savings.saveToFile("savings.ser");
+        saveAccounts(accounts);
     }
 
-    private static void checkingInterface(Scanner in, Account acc) {
+    private static void accountInterface(Scanner in, Account acc) {
         while (true) {
-            System.out.println("\n-----------------CHECKING-----------------");
+            String printString = "";
+            for (int i = 0; i < (42 - acc.name.length()) / 2; i++) {
+                printString += "-";
+            }
+            printString += acc.name.toUpperCase();
+            for (int i = 0; i < (42 - acc.name.length()) / 2; i++) {
+                printString += "-";
+            }
+            System.out.println(printString);
             System.out.printf("Total Account Balance: %.2f\n", acc.getBalance());
             LinkedList<BudgetAmt> subAccounts = acc.getsubAccounts();
             if (subAccounts != null && !subAccounts.isEmpty()) {
                 System.out.printf("Budgets:                   \n");
-                String printString;
                 float budgetTotal = 0;
                 for (BudgetAmt subAccount : subAccounts) {
                     printString = "    " + subAccount.name;
@@ -280,19 +327,20 @@ public class Ledger{
         }
     }
 
-    private static Account readFromFile(String filepath) {
+    private static ArrayList<Account> readFromFile(String filepath) {
         try {
             FileInputStream f = new FileInputStream(new File(filepath));
             ObjectInputStream o = new ObjectInputStream(f);
-            Account acc = (Account) o.readObject();
+            ArrayList<Account> acc = (ArrayList<Account>) o.readObject();
             o.close();
             f.close();
             return acc;
         } catch (FileNotFoundException e) {
-            if (filepath.equals("checking.ser")) {
-                return new Account(true);
-            } else if (filepath.equals("savings.ser")) {
-                return new Account(false);
+            if (filepath.equals("accounts.ser")) {
+                ArrayList<Account> accounts = new ArrayList<>();
+                accounts.add(new Account("Checking"));
+                accounts.add(new Account("Savings"));
+                return accounts;
             } else {
                 System.out.println("Invalid filepath.");
             }
@@ -304,5 +352,20 @@ public class Ledger{
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static void saveAccounts(ArrayList<Account> accounts) {
+        try {
+            FileOutputStream f = new FileOutputStream(new File("accounts.ser"));
+            ObjectOutputStream o = new ObjectOutputStream(f);
+            o.writeObject(accounts);
+            o.close();
+            f.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+        } catch (IOException e) {
+            System.out.println("Error Initializing Stream.");
+            e.printStackTrace();
+        }
     }
 }
