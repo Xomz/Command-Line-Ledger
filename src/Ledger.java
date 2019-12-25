@@ -137,15 +137,15 @@ public class Ledger{
 
             }
             System.out.println("------------------------------------------\n");
-            System.out.println("<Press (1) to make a deposit, (2) for a withdrawal, (3) to create a new budget, or (4) to delete a budget, or (5) to exit.>");
+            System.out.println("<Type (1) to make a deposit, (2) for a withdrawal, 'add' to create a new budget, or 'delete' to delete a budget, or 'exit' to exit.>");
             String s;
             while (true) {
                 s = in.nextLine();
                 if (s.equals("")) {
                     continue;
                 }
-                if (!s.equals("1") && !s.equals("2") && !s.equals("3") && !s.equals("4") && !s.equals("5")) {
-                    System.out.println("Please only enter the prompted numbers.");
+                if (!s.equals("1") && !s.equals("2") && !s.equals("add") && !s.equals("delete") && !s.equals("exit")) {
+                    System.out.println("Please only enter the prompted commands.");
                 } else {
                     break;
                 }
@@ -178,7 +178,7 @@ public class Ledger{
                     withdrawal = in.nextFloat();
                 }
                 acc.withdraw(withdrawal);
-            } else if (s.equals("3")){ // Add Budget
+            } else if (s.equals("add")){ // Add Budget
                 System.out.println("What would you like to name your budget? (1-15 characters)");
                 String name = in.nextLine();
                 while (name.length() == 0) {
@@ -209,7 +209,7 @@ public class Ledger{
                 if (s.equals("n")) { continue; }
                 acc.addBudget(name, budget);
                 System.out.printf("Budget Added.\n");
-            } else if (s.equals("4")) { // Delete Budget
+            } else if (s.equals("delete")) { // Delete Budget
                 if (subAccounts == null || subAccounts.isEmpty()) {
                     System.out.println("There are no budgets to delete. Create a budget first.");
                     continue;
@@ -231,7 +231,7 @@ public class Ledger{
                 if (found) {
                     System.out.println("Budget removed.");
                 }
-            } else if (s.equals("5")) { // Exit
+            } else if (s.equals("exit")) { // Exit
                 break;
             }
         }
